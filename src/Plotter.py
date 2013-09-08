@@ -56,15 +56,15 @@ def smoothen(plot_points, window_size) :
         x_axis_raw = sorted_output_raw[index][0]
         y_axis_raw = sorted_output_raw[index][1]
         
-        if index > window_size :
+        x_axis_sum  = x_axis_sum + x_axis_raw
+        y_axis_sum  = y_axis_sum + y_axis_raw
+
+        if index >= window_size - 1 :
             x_axis.append(int(x_axis_sum / window_size))
             y_axis.append(int(y_axis_sum / window_size))
             
-            x_axis_sum = x_axis_sum - sorted_output_raw[index - 1][0]
-            y_axis_sum - y_axis_sum - sorted_output_raw[index - 1][1]
-   
-        x_axis_sum  = x_axis_sum + x_axis_raw
-        y_axis_sum  = y_axis_sum + y_axis_raw
+            x_axis_sum = x_axis_sum - sorted_output_raw[index - window_size + 1][0]
+            y_axis_sum = y_axis_sum - sorted_output_raw[index - window_size + 1][1]
         
     return x_axis, y_axis
             
@@ -101,7 +101,7 @@ if __name__ == '__main__':
         (x_axis, y_axis) = smoothen(plot_points, int(options.window_size))
     
     plt.plot(x_axis, y_axis)
-    plt.axis([min(x_axis), max(x_axis), min(y_axis), max(y_axis)])
+    plt.axis([min(x_axis), max(x_axis) + min(x_axis), min(y_axis), max(y_axis) + min(y_axis)])
     
     if options.x_axis != None :
         plt.xlabel(options.x_axis)
