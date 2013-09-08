@@ -68,7 +68,7 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
     check_options(options)
     
-    timing_obj  = Wrapper(input_file=os.path.join(options.path, "timing_data"), output=os.path.join(options.outdir, "timing"), x_axis="Area", y_axis="Time (milliseconds)", y_conversion="/ 1e6", window_size=options.window_size)
+    timing_obj  = Wrapper(input_file=os.path.join(options.path, "timing_data"), output=os.path.join(options.outdir, "timing"), x_axis="Area", y_axis="Time (seconds)", y_conversion="/ 1e9", window_size=options.window_size)
     memory_obj  = Wrapper(input_file=os.path.join(options.path, "memory_data"), output=os.path.join(options.outdir, "memory"), x_axis="Area", y_axis="Memory (Megabytes)", y_conversion="/ 1e6", window_size=options.window_size)
     max_mem_obj = Wrapper(input_file=os.path.join(options.path, "max_mem_data"), output=os.path.join(options.outdir, "max_mem"), x_axis="Area", y_axis="Max Mem (Megabytes)", y_conversion="/ 1e6", window_size=options.window_size)
     
