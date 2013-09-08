@@ -9,7 +9,7 @@ import optparse
 import numpy
 import matplotlib.pyplot as plt;
 import re
-
+import operator
 
 def setup_parser(parser) :
     parser.add_option("-f", "--file"  , type="string", action="store", help="Input file to parse")
@@ -42,23 +42,29 @@ def convert(value, logic) :
     if match_obj.group(1) is "/" :
         return float(float(value) / float(match_obj.group(2)))
 
-def smoothen(x_axis_raw, y_axis_raw, window_size) :
+def smoothen(plot_points, window_size) :
+#     We need to sort before smoothing
+    sorted_output_raw = sorted(plot_points.iteritems(), key=operator.itemgetter(0))
+    
     x_axis_sum  = 0
     y_axis_sum  = 0
     
     x_axis      = []
     y_axis      = []
     
-    for index in range(len(x_axis_raw)) :
+    for index in range(len(sorted_output_raw)) :
+        x_axis_raw = sorted_output_raw[index][0]
+        y_axis_raw = sorted_output_raw[index][1]
+        
         if index > window_size :
-            x_axis.append(x_axis_sum / window_size)
-            y_axis.append(y_axis_sum / window_size)
+            x_axis.append(int(x_axis_sum / window_size))
+            y_axis.append(int(y_axis_sum / window_size))
             
-            x_axis_sum = x_axis_sum - x_axis_raw[index - window_size]
-            y_axis_sum - y_axis_sum - y_axis_raw[index - window_size]
-
-        x_axis_sum  = x_axis_sum + x_axis_raw[index]
-        y_axis_sum  = y_axis_sum + y_axis_raw[index]
+            x_axis_sum = x_axis_sum - sorted_output_raw[index - 1][0]
+            y_axis_sum - y_axis_sum - sorted_output_raw[index - 1][1]
+   
+        x_axis_sum  = x_axis_sum + x_axis_raw
+        y_axis_sum  = y_axis_sum + y_axis_raw
         
     return x_axis, y_axis
             
@@ -72,8 +78,7 @@ if __name__ == '__main__':
     
     input_file = open(options.file, "r")
     
-    x_axis_raw = []
-    y_axis_raw = []
+    plot_points = {}
     for line in input_file :
         split = line.split('=', 1)
         if len(split) < 2 :
@@ -87,17 +92,16 @@ if __name__ == '__main__':
             x_val = convert(x_val, options.x_conversion)
         if options.y_conversion != None :
             y_val = convert(y_val, options.y_conversion)
-        
-        x_axis_raw.append(x_val)
-        y_axis_raw.append(y_val)
+
+        plot_points.update({x_val: y_val})
     
-    x_axis = x_axis_raw
-    y_axis = y_axis_raw
-    
+    x_axis = plot_points.keys()
+    y_axis = plot_points.values()
     if options.window_size != None :
-        (x_axis, y_axis) = smoothen(x_axis_raw, y_axis_raw, int(options.window_size))
+        (x_axis, y_axis) = smoothen(plot_points, int(options.window_size))
     
     plt.plot(x_axis, y_axis)
+    plt.axis([min(x_axis), max(x_axis), min(y_axis), max(y_axis)])
     
     if options.x_axis != None :
         plt.xlabel(options.x_axis)
