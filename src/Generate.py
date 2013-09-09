@@ -83,9 +83,9 @@ if __name__ == '__main__':
         sys.exit(0)
 
     procs = []
-    procs.append(subprocess.Popen(timing_obj.build()))
-    procs.append(subprocess.Popen(memory_obj.build()))
-    procs.append(subprocess.Popen(max_mem_obj.build()))
+    procs.append(subprocess.Popen(timing_obj.build(), shell=True))
+    procs.append(subprocess.Popen(memory_obj.build(), shell=True))
+    procs.append(subprocess.Popen(max_mem_obj.build(), shell=True))
     
     while 1 :
         for proc in procs :
