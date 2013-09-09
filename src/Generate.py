@@ -7,6 +7,7 @@ Created on Sep 7, 2013
 import optparse
 import subprocess
 import os
+import sys
 
 class Wrapper :
     __file          = None
@@ -55,6 +56,7 @@ def setup_parser(parser) :
     parser.add_option("-p", "--path"        , type="string" , action="store", help="Path for input files")
     parser.add_option("-o", "--outdir"      , type="string" , action="store", help="Path for output")
     parser.add_option("-w", "--window_size" , type="string" , action="store", help="Window size for moving average")
+    parser.add_option("-t", "--test"        ,                 action="store_true", help="Dry run - prints commands and exits")
 
 def check_options(options) :
    
@@ -72,6 +74,14 @@ if __name__ == '__main__':
     memory_obj  = Wrapper(input_file=os.path.join(options.path, "memory_data"), output=os.path.join(options.outdir, "memory"), x_axis="Area", y_axis="Memory (Megabytes)", y_conversion="/ 1e6", window_size=options.window_size)
     max_mem_obj = Wrapper(input_file=os.path.join(options.path, "max_mem_data"), output=os.path.join(options.outdir, "max_mem"), x_axis="Area", y_axis="Max Mem (Megabytes)", y_conversion="/ 1e6", window_size=options.window_size)
     
+
+    print "Commandlines :\n"
+    print timing_obj.build() + "\n"
+    print memory_obj.build() + "\n"
+    print max_mem_obj.build() + "\n"
+    if options.test is True :
+        sys.exit(0)
+
     procs = []
     procs.append(subprocess.Popen(timing_obj.build()))
     procs.append(subprocess.Popen(memory_obj.build()))
