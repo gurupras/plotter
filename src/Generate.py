@@ -61,7 +61,12 @@ def setup_parser(parser) :
 def check_options(options) :
    
     assert options.path != None, "Must specify path!"
-    assert options.outdir != None, "Must specify output path!"
+    
+    if options.outdir == None :
+        options.outdir = os.path.join(options.path, "plots")
+        if not os.path.exists(options.outdir) :
+            os.mkdir(options.outdir)
+#     assert options.outdir != None, "Must specify output path!"
 
 if __name__ == '__main__':
     parser = optparse.OptionParser()
@@ -94,5 +99,6 @@ if __name__ == '__main__':
                 flag = 0
         if flag is 1 :
             break
-    
+
+
     
